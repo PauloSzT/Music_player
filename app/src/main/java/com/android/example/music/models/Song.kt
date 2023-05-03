@@ -1,9 +1,8 @@
 package com.android.example.music.models
 
-import java.net.URL
-
 class Song(
-    val name: String,
-    val url: Int
+    val path: String,
+    val index: Int,
+    val name: String
 ) {
 }
