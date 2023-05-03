@@ -1,15 +1,13 @@
 package com.android.example.music.player
 
-import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
-import android.net.Uri
 import com.android.example.music.models.Song
 
 interface MusicPlayer {
-    fun playCurrentSong()
+
     fun playSong(songIndex: Int)
     fun pauseCurrentSong()
+    fun resumeCurrentSong()
     fun stopSong()
     fun skipPrev()
     fun skipNext()
@@ -20,30 +18,50 @@ class MusicPlayerImplementation(
 ) : MusicPlayer {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
-    override fun playCurrentSong() {
-        TODO("Not yet implemented")
-    }
+    private var currentSongIndex: Int = 0
 
     override fun playSong(songIndex: Int) {
         mediaPlayer.setDataSource(songsList[songIndex].path)
         mediaPlayer.prepare()
         mediaPlayer.setVolume(1.0f, 1.0f)
         mediaPlayer.start()
+        currentSongIndex = songIndex
     }
 
     override fun pauseCurrentSong() {
-        TODO("Not yet implemented")
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+        }
+    }
+
+    override fun resumeCurrentSong() {
+        if (!mediaPlayer.isPlaying) {
+            mediaPlayer.start()
+        }
     }
 
     override fun stopSong() {
-        TODO("Not yet implemented")
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.stop()
+        }
     }
 
     override fun skipPrev() {
-        TODO("Not yet implemented")
+
+        mediaPlayer.stop()
+        if (currentSongIndex == 0) {
+            playSong(songsList.size - 1)
+        } else {
+            playSong(currentSongIndex - 1)
+        }
     }
 
     override fun skipNext() {
-        TODO("Not yet implemented")
+        mediaPlayer.stop()
+        if (currentSongIndex == songsList.size - 1) {
+            playSong(0)
+        } else {
+            playSong(currentSongIndex + 1)
+        }
     }
 }

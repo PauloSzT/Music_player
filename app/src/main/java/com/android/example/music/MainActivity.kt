@@ -70,14 +70,13 @@ class MainActivity : AppCompatActivity() {
                         .toString()
                 Song(path = item.path, index = index, name = trackName)
             }
-        songsList?.let {list ->
+        songsList?.let { list ->
             musicPlayer = MusicPlayerImplementation(list)
         }
     }
 
     companion object {
         private const val CHILD_ROUTE = "Music/Music-App"
-        private const val TAG = "MusicApp"
         private const val REQUEST_CODE_PERMISSIONS = 100
         private val REQUIRED_PERMISSIONS =
             mutableListOf<String>().apply {
