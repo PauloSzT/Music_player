@@ -1,7 +1,10 @@
 package com.android.example.music.player
 
 import android.media.MediaPlayer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.android.example.music.models.Song
+import kotlin.random.Random
 
 interface MusicPlayer {
 
@@ -14,11 +17,13 @@ interface MusicPlayer {
 }
 
 class MusicPlayerImplementation(
-    private val songsList: List<Song>
+    val songsList: List<Song>
 ) : MusicPlayer {
 
-    private var mediaPlayer: MediaPlayer = MediaPlayer()
+    var mediaPlayer: MediaPlayer = MediaPlayer()
     private var currentSongIndex: Int = 0
+    val isShuffle = MutableLiveData(false)
+
 
     override fun playSong(songIndex: Int) {
         mediaPlayer.setDataSource(songsList[songIndex].path)
@@ -58,10 +63,35 @@ class MusicPlayerImplementation(
 
     override fun skipNext() {
         mediaPlayer.stop()
-        if (currentSongIndex == songsList.size - 1) {
-            playSong(0)
+        if (isShuffle.value == true) {
+            val random = (songsList.indices).random()
+            playSong(random)
         } else {
-            playSong(currentSongIndex + 1)
+            if (currentSongIndex == songsList.size - 1) {
+                playSong(0)
+            } else {
+                playSong(currentSongIndex + 1)
+            }
+        }
+    }
+
+    fun playList() {
+        if (isShuffle.value == true) {
+            val random = (songsList.indices).random()
+            playSong(random)
+            mediaPlayer.setOnCompletionListener {
+                val randomNext = (songsList.indices).random()
+                playSong(randomNext)
+            }
+        } else {
+            playSong(0)
+            mediaPlayer.setOnCompletionListener { playSong(currentSongIndex + 1) }
+        }
+    }
+
+    fun toggleShuffle() {
+        isShuffle.value?.let {
+            isShuffle.value = !it
         }
     }
 }

@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">Music</string>
+    <string name="App_name">Music Media Player</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="songs">SONGS</string>
+    <string name="songs_list">Songs List</string>
+    <string name="now_playing">Now Playing</string>
 </resources>
