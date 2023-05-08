@@ -28,6 +28,10 @@ class PlayFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bundle = arguments
+        val args = bundle?.let { PlayFragmentArgs.fromBundle(it) }
+        binding.songName.text = args?.songname
+
         val seekBarObserver = Observer<Pair<Int, Int>> { pair ->
             binding.seekbar.progress = pair.first
             binding.seekbar.max = pair.second
@@ -56,13 +60,17 @@ class PlayFragment : Fragment() {
                 binding.fabPlay.setImageResource(R.drawable.ic_pause_circle)
             }
         }
-        binding.songName.text
 
         binding.fabBackward.setOnClickListener {
-            activityViewModel.musicPlayer.value?.skipPrev()
+            activityViewModel.musicPlayer.value?.let { player ->
+                binding.songName.text = player.skipPrev()
+            }
+
         }
         binding.fabForward.setOnClickListener {
-            activityViewModel.musicPlayer.value?.skipNext()
+            activityViewModel.musicPlayer.value?.let{ player ->
+                binding.songName.text = player.skipNext()
+            }
         }
     }
 }

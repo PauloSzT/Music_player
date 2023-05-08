@@ -36,11 +36,13 @@ class HomeFragment : Fragment() {
         val songsObserver = Observer<MusicPlayerImplementation?> { musicPlayer ->
             musicPlayer?.let { player ->
                 val adapter =
-                    SongListAdapter(data = player.songsList.filter {
-                        it.isInPlaylist.value == true
-                    }, requireContext()) { indexSong ->
+                    SongListAdapter(data = player.playList, requireContext()) { indexSong ->
                         player.playSong(indexSong)
-                        navigateToPlayFragment()
+                        activityViewModel.musicPlayer.value?.let{ player ->
+                            navigateToPlayFragment(
+                                songName = player.playList[indexSong].name
+                            )
+                        }
 //                            val intent = Intent("android.intent.action.ACTION_PLAY")
 //                            intent.putExtra("song_title", "My Song Title")
 //                            intent.putExtra("song_artist", "My Song Artist")
@@ -50,8 +52,12 @@ class HomeFragment : Fragment() {
                 binding.songContainer.layoutManager = LinearLayoutManager(requireContext())
                 binding.songContainer.adapter = adapter
                 binding.fabPlayList.setOnClickListener {
-                    player.playList()
-                    navigateToPlayFragment()
+                    val currentPlayingIndex = player.playList()
+                    activityViewModel.musicPlayer.value?.let{ player ->
+                        navigateToPlayFragment(
+                            songName = player.playList[currentPlayingIndex].name
+                        )
+                    }
                 }
                 val shuffleObserver = Observer<Boolean> { isShuffling ->
                     if (isShuffling) {
@@ -74,9 +80,9 @@ class HomeFragment : Fragment() {
         )
     }
 
-    private fun navigateToPlayFragment() {
+    private fun navigateToPlayFragment(songName: String) {
         val action =
-            HomeFragmentDirections.actionHomeFragmentToPlayFragment()
+            HomeFragmentDirections.actionHomeFragmentToPlayFragment(songName)
         findNavController().navigate(action)
     }
 }

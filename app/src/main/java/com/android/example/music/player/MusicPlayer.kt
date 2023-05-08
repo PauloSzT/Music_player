@@ -11,10 +11,10 @@ interface MusicPlayer {
 
     fun playSong(songIndex: Int)
     fun pauseOrResumeCurrentSong(): Boolean
-    fun skipPrev()
-    fun skipNext()
+    fun skipPrev() : String
+    fun skipNext() : String
     fun toggleShuffle()
-    fun playList()
+    fun playList(): Int
     fun seekTo(position: Int)
     fun addSong(songIndex: Int)
     fun removeSong(songIndex: Int)
@@ -31,10 +31,14 @@ class MusicPlayerImplementation(
     val isShuffle = MutableLiveData(false)
     val seekBarPosition = MutableLiveData<Pair<Int, Int>>()
     private var isSeekBarRunning = false
+    var playList: List<Song> = songsList.filter{
+        it.isInPlaylist.value == true
+    }
 
 
     override fun playSong(songIndex: Int) {
-        mediaPlayer.setDataSource(songsList[songIndex].path)
+        destroyPlayer()
+        mediaPlayer.setDataSource(playList[songIndex].path)
         mediaPlayer.prepare()
         mediaPlayer.setVolume(1.0f, 1.0f)
         mediaPlayer.start()
@@ -52,43 +56,46 @@ class MusicPlayerImplementation(
         }
     }
 
-    override fun skipPrev() {
+    override fun skipPrev() : String{
         if (currentSongIndex == 0) {
-            destroyPlayer()
-            playSong(songsList.size - 1)
+            playSong(playList.size - 1)
+            return playList[playList.size - 1].name
         } else {
-            destroyPlayer()
             playSong(currentSongIndex - 1)
+            return playList[currentSongIndex].name
         }
+
     }
 
-    override fun skipNext() {
+    override fun skipNext() : String {
         if (isShuffle.value == true) {
-            val random = (songsList.indices).random()
-            destroyPlayer()
+            val random = (playList.indices).random()
             playSong(random)
+            return playList[random].name
         } else {
-            if (currentSongIndex == songsList.size - 1) {
-                destroyPlayer()
+            if (currentSongIndex == playList.size - 1) {
                 playSong(0)
+                return playList[0].name
             } else {
-                destroyPlayer()
                 playSong(currentSongIndex + 1)
+                return playList[currentSongIndex].name
             }
         }
     }
 
-    override fun playList() {
+    override fun playList() : Int {
         if (isShuffle.value == true) {
-            val random = (songsList.indices).random()
+            val random = (playList.indices).random()
             playSong(random)
             mediaPlayer.setOnCompletionListener {
-                val randomNext = (songsList.indices).random()
+                val randomNext = (playList.indices).random()
                 playSong(randomNext)
             }
+            return random
         } else {
             playSong(0)
             mediaPlayer.setOnCompletionListener { playSong(currentSongIndex + 1) }
+            return 0
         }
     }
 
@@ -104,10 +111,16 @@ class MusicPlayerImplementation(
 
     override fun addSong(songIndex: Int) {
         songsList[songIndex].isInPlaylist.value = true
+        playList = songsList.filter{
+            it.isInPlaylist.value == true
+        }
     }
 
     override fun removeSong(songIndex: Int) {
         songsList[songIndex].isInPlaylist.value = false
+        playList = songsList.filter{
+            it.isInPlaylist.value == false
+        }
     }
 
     override fun destroyPlayer() {
