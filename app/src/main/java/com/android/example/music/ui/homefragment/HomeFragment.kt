@@ -36,9 +36,16 @@ class HomeFragment : Fragment() {
         val songsObserver = Observer<MusicPlayerImplementation?> { musicPlayer ->
             musicPlayer?.let { player ->
                 val adapter =
-                    SongListAdapter(data = player.songsList, requireContext()) { indexSong ->
+                    SongListAdapter(data = player.songsList.filter {
+                        it.isInPlaylist.value == true
+                    }, requireContext()) { indexSong ->
                         player.playSong(indexSong)
                         navigateToPlayFragment()
+//                            val intent = Intent("android.intent.action.ACTION_PLAY")
+//                            intent.putExtra("song_title", "My Song Title")
+//                            intent.putExtra("song_artist", "My Song Artist")
+//                            intent.putExtra("song_duration", 180) // song duration in seconds
+//                            context?.sendBroadcast(intent)
                     }
                 binding.songContainer.layoutManager = LinearLayoutManager(requireContext())
                 binding.songContainer.adapter = adapter
@@ -73,4 +80,3 @@ class HomeFragment : Fragment() {
         findNavController().navigate(action)
     }
 }
-

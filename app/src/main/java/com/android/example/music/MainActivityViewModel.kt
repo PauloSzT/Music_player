@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Environment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.android.example.music.models.Song
 import com.android.example.music.player.MusicPlayerImplementation
 import java.io.File
@@ -14,8 +15,9 @@ class MainActivityViewModel(private val application: Application) : ViewModel() 
 
     val musicPlayer = MutableLiveData<MusicPlayerImplementation?>(null)
     private val folder = Environment.getExternalStorageDirectory()
+
     fun initializePlayer() {
-        val list =
+        var list =
          File(folder, CHILD_ROUTE)
             .listFiles()?.mapIndexed { index, item ->
                 val metadataRetriever = MediaMetadataRetriever()
@@ -24,14 +26,14 @@ class MainActivityViewModel(private val application: Application) : ViewModel() 
                 val trackName =
                     metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
                         .toString()
-                Song(
+                 Song(
                     path = item.path,
                     index = index,
                     name = trackName,
-                    isInPlaylist = (0..2).contains(index)
+                    isInPlaylist = MutableLiveData((0..2).contains(index))
                 )
             } ?: emptyList()
-        musicPlayer.value = MusicPlayerImplementation(list)
+        musicPlayer.value = MusicPlayerImplementation(list, viewModelScope)
     }
 
     companion object {

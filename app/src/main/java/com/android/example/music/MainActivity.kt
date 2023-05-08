@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModelFactory: MainActivityViewModelFactory
-    lateinit var viewModel: MainActivityViewModel
+    private lateinit var viewModel: MainActivityViewModel
     private var requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 isGranted: Boolean ->

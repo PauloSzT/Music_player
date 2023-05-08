@@ -1,26 +1,50 @@
 package com.android.example.music.ui.settingsfragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.android.example.music.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.example.music.MainActivityViewModel
+import com.android.example.music.databinding.FragmentSettingsBinding
+import com.android.example.music.player.MusicPlayerImplementation
 
 class SettingsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
+    private lateinit var binding: FragmentSettingsBinding
+    private val activityViewModel: MainActivityViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+    ): View {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val songsObserver = Observer<MusicPlayerImplementation?> { musicPlayer ->
+            musicPlayer?.let { player ->
+                val adapter =
+                    SettingsListAdapter(
+                        data = player.songsList, requireContext(), requireActivity()
+                    ) { indexSong ->
+                        if (player.songsList[indexSong].isInPlaylist.value == true) {
+                            player.removeSong(indexSong)
+                        } else {
+                            player.addSong(indexSong)
+                        }
+                    }
+                binding.songContainer.layoutManager = LinearLayoutManager(requireContext())
+                binding.songContainer.adapter = adapter
+            }
+        }
+        activityViewModel.musicPlayer.observe(
+            requireActivity(),
+            songsObserver
+        )
     }
 }

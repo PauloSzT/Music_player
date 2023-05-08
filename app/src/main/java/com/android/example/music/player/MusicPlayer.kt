@@ -1,28 +1,36 @@
 package com.android.example.music.player
 
 import android.media.MediaPlayer
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.android.example.music.models.Song
-import kotlin.random.Random
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 interface MusicPlayer {
 
     fun playSong(songIndex: Int)
-    fun pauseCurrentSong()
-    fun resumeCurrentSong()
-    fun stopSong()
+    fun pauseOrResumeCurrentSong(): Boolean
     fun skipPrev()
     fun skipNext()
+    fun toggleShuffle()
+    fun playList()
+    fun seekTo(position: Int)
+    fun addSong(songIndex: Int)
+    fun removeSong(songIndex: Int)
+    fun destroyPlayer()
 }
 
 class MusicPlayerImplementation(
-    val songsList: List<Song>
+    var songsList: List<Song>,
+    private val viewModelScope: CoroutineScope
 ) : MusicPlayer {
 
-    var mediaPlayer: MediaPlayer = MediaPlayer()
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
     private var currentSongIndex: Int = 0
     val isShuffle = MutableLiveData(false)
+    val seekBarPosition = MutableLiveData<Pair<Int, Int>>()
+    private var isSeekBarRunning = false
 
 
     override fun playSong(songIndex: Int) {
@@ -31,51 +39,46 @@ class MusicPlayerImplementation(
         mediaPlayer.setVolume(1.0f, 1.0f)
         mediaPlayer.start()
         currentSongIndex = songIndex
+        initializeSeekBar()
     }
 
-    override fun pauseCurrentSong() {
+    override fun pauseOrResumeCurrentSong(): Boolean {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.pause()
-        }
-    }
-
-    override fun resumeCurrentSong() {
-        if (!mediaPlayer.isPlaying) {
+            return true
+        } else {
             mediaPlayer.start()
-        }
-    }
-
-    override fun stopSong() {
-        if (mediaPlayer.isPlaying) {
-            mediaPlayer.stop()
+            return false
         }
     }
 
     override fun skipPrev() {
-
-        mediaPlayer.stop()
         if (currentSongIndex == 0) {
+            destroyPlayer()
             playSong(songsList.size - 1)
         } else {
+            destroyPlayer()
             playSong(currentSongIndex - 1)
         }
     }
 
     override fun skipNext() {
-        mediaPlayer.stop()
         if (isShuffle.value == true) {
             val random = (songsList.indices).random()
+            destroyPlayer()
             playSong(random)
         } else {
             if (currentSongIndex == songsList.size - 1) {
+                destroyPlayer()
                 playSong(0)
             } else {
+                destroyPlayer()
                 playSong(currentSongIndex + 1)
             }
         }
     }
 
-    fun playList() {
+    override fun playList() {
         if (isShuffle.value == true) {
             val random = (songsList.indices).random()
             playSong(random)
@@ -89,9 +92,36 @@ class MusicPlayerImplementation(
         }
     }
 
-    fun toggleShuffle() {
+    override fun seekTo(position: Int) {
+        mediaPlayer.seekTo(position)
+    }
+
+    override fun toggleShuffle() {
         isShuffle.value?.let {
             isShuffle.value = !it
+        }
+    }
+
+    override fun addSong(songIndex: Int) {
+        songsList[songIndex].isInPlaylist.value = true
+    }
+
+    override fun removeSong(songIndex: Int) {
+        songsList[songIndex].isInPlaylist.value = false
+    }
+
+    override fun destroyPlayer() {
+        mediaPlayer.stop()
+        mediaPlayer.reset()
+    }
+
+    private fun initializeSeekBar() {
+        viewModelScope.launch {
+            isSeekBarRunning = true
+            while (isSeekBarRunning) {
+                seekBarPosition.value = Pair(mediaPlayer.currentPosition, mediaPlayer.duration)
+                delay(1000)
+            }
         }
     }
 }
