@@ -12,13 +12,10 @@ import androidx.navigation.fragment.findNavController
 import com.android.example.music.MainActivityViewModel
 import com.android.example.music.R
 import com.android.example.music.databinding.FragmentPlayBinding
-import com.android.example.music.ui.homefragment.HomeFragmentDirections
-
 
 class PlayFragment : Fragment() {
     private lateinit var binding: FragmentPlayBinding
     private val activityViewModel: MainActivityViewModel by activityViewModels()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

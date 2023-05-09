@@ -17,7 +17,6 @@ class MainActivityViewModel(private val application: Application) : ViewModel() 
     val musicPlayer = MutableLiveData<MusicPlayerImplementation?>(null)
     private val songProvider: SongProvider = SongProvider(application.contentResolver)
 
-
     fun initializePlayer() {
         var list = songProvider.getSongsList().mapIndexed { index, item ->
                 val metadataRetriever = MediaMetadataRetriever()

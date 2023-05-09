@@ -65,7 +65,6 @@ class MusicPlayerImplementation(
             playSong(currentSongIndex - 1)
             return playList[currentSongIndex].name
         }
-
     }
 
     override fun skipNext() : String {
