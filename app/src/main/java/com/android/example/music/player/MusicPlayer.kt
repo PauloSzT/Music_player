@@ -113,6 +113,9 @@ class MusicPlayerImplementation(
         songsList[songIndex].isInPlaylist.value = true
         playList = songsList.filter{
             it.isInPlaylist.value == true
+        }.mapIndexed { index, song ->
+            song.index = index
+            song
         }
     }
 
@@ -120,6 +123,9 @@ class MusicPlayerImplementation(
         songsList[songIndex].isInPlaylist.value = false
         playList = songsList.filter{
             it.isInPlaylist.value == false
+        }.mapIndexed { index, song ->
+            song.index = index
+            song
         }
     }
 
