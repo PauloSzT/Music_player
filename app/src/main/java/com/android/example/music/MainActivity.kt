@@ -1,6 +1,8 @@
 package com.android.example.music
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -9,24 +11,27 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
+import com.android.example.music.broadcast.MusicBroadcastReceiver
 import com.android.example.music.models.SongProvider
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModelFactory: MainActivityViewModelFactory
     private lateinit var viewModel: MainActivityViewModel
     private var requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                isGranted: Boolean ->
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 viewModel.initializePlayer()
             } else {
                 ActivityCompat.requestPermissions(
-                    this@MainActivity, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+                    this@MainActivity, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                )
             }
         }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        initializeBroadcastReceiver()
         REQUIRED_PERMISSIONS.forEach {
             requestPermissionLauncher.launch(it)
         }
@@ -36,7 +41,11 @@ class MainActivity : AppCompatActivity() {
             ViewModelProvider(this, viewModelFactory)[MainActivityViewModel::class.java]
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -52,7 +61,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    fun initializeBroadcastReceiver() {
+        val filter = IntentFilter(BROADCAST_ACTION)
+        this.registerReceiver(MusicBroadcastReceiver(), filter)
+    }
+
     companion object {
+        private const val BROADCAST_ACTION = "com.example.music.MUSIC_BROADCAST"
         private const val REQUEST_CODE_PERMISSIONS = 100
         private val REQUIRED_PERMISSIONS =
             mutableListOf<String>().apply {

@@ -24,6 +24,7 @@ interface MusicPlayer {
 class MusicPlayerImplementation(
     var songsList: List<Song>,
     private val viewModelScope: CoroutineScope,
+    val sendBroadcastCallback: (String) -> Unit
 ) : MusicPlayer {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
@@ -42,6 +43,7 @@ class MusicPlayerImplementation(
         mediaPlayer.setVolume(1.0f, 1.0f)
         mediaPlayer.start()
         currentSongIndex = songIndex
+        sendBroadcastCallback(playList[currentSongIndex].name)
         initializeSeekBar()
     }
 
