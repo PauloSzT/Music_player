@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 
 class Song(
     val path: String,
-    val index: Int,
+    var index: Int,
     val name: String,
     var isInPlaylist: MutableLiveData<Boolean>
 )
