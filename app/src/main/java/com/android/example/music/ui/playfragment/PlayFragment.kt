@@ -8,9 +8,11 @@ import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.android.example.music.MainActivityViewModel
 import com.android.example.music.R
 import com.android.example.music.databinding.FragmentPlayBinding
+import com.android.example.music.ui.homefragment.HomeFragmentDirections
 
 
 class PlayFragment : Fragment() {
@@ -31,6 +33,10 @@ class PlayFragment : Fragment() {
         val bundle = arguments
         val args = bundle?.let { PlayFragmentArgs.fromBundle(it) }
         binding.songName.text = args?.songname
+        binding.fabSettings.setOnClickListener {
+            val action = PlayFragmentDirections.actionPlayFragmentToSettingsFragment()
+            findNavController().navigate(action)
+        }
 
         val seekBarObserver = Observer<Pair<Int, Int>> { pair ->
             binding.seekbar.progress = pair.first

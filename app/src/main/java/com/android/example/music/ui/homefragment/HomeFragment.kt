@@ -43,11 +43,6 @@ class HomeFragment : Fragment() {
                                 songName = player.playList[indexSong].name
                             )
                         }
-//                            val intent = Intent("android.intent.action.ACTION_PLAY")
-//                            intent.putExtra("song_title", "My Song Title")
-//                            intent.putExtra("song_artist", "My Song Artist")
-//                            intent.putExtra("song_duration", 180) // song duration in seconds
-//                            context?.sendBroadcast(intent)
                     }
                 binding.songContainer.layoutManager = LinearLayoutManager(requireContext())
                 binding.songContainer.adapter = adapter
