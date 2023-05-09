@@ -23,7 +23,7 @@ interface MusicPlayer {
 
 class MusicPlayerImplementation(
     var songsList: List<Song>,
-    private val viewModelScope: CoroutineScope
+    private val viewModelScope: CoroutineScope,
 ) : MusicPlayer {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
@@ -34,7 +34,6 @@ class MusicPlayerImplementation(
     var playList: List<Song> = songsList.filter{
         it.isInPlaylist.value == true
     }
-
 
     override fun playSong(songIndex: Int) {
         destroyPlayer()

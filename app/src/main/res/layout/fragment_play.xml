@@ -29,13 +29,12 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="55dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_settings"
-            app:shapeAppearanceOverlay="@style/curved" />
-
-
+            app:shapeAppearanceOverlay="@style/curved"
+            app:tint="@color/white" />
     </LinearLayout>
 
     <LinearLayout
@@ -59,7 +58,6 @@
                 android:layout_margin="10dp"
                 android:src="@drawable/music"
                 app:shapeAppearanceOverlay="@style/curved" />
-
         </androidx.constraintlayout.motion.widget.MotionLayout>
     </LinearLayout>
 

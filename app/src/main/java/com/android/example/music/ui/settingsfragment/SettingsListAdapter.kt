@@ -41,7 +41,7 @@ class SettingsListAdapter(
                     ContextCompat.getColorStateList(context, R.color.pink)
             } else {
                 songRow.backgroundTintList =
-                    ContextCompat.getColorStateList(context, R.color.white)
+                    ContextCompat.getColorStateList(context, R.color.light_dark)
             }
         }
 

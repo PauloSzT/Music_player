@@ -38,40 +38,6 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/buttons_list_wrapper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_addsong"
-            android:tint="@color/black"
-            app:backgroundTint="@color/white"
-            app:maxImageSize="30dp"
-            app:shapeAppearanceOverlay="@style/curved" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_remove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:src="@drawable/ic_removesong"
-            android:tint="@color/black"
-            app:backgroundTint="@color/white"
-            app:maxImageSize="30dp"
-            app:shapeAppearanceOverlay="@style/curved" />
-    </LinearLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/song_container"
         android:layout_width="match_parent"
