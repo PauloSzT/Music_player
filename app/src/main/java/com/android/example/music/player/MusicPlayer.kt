@@ -1,6 +1,8 @@
 package com.android.example.music.player
 
+import android.content.Context
 import android.media.MediaPlayer
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.android.example.music.models.Song
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +26,8 @@ interface MusicPlayer {
 class MusicPlayerImplementation(
     var songsList: List<Song>,
     private val viewModelScope: CoroutineScope,
-    val sendBroadcastCallback: (String) -> Unit
+    val sendBroadcastCallback: (String) -> Unit,
+    val context: Context
 ) : MusicPlayer {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
@@ -38,7 +41,7 @@ class MusicPlayerImplementation(
 
     override fun playSong(songIndex: Int) {
         destroyPlayer()
-        mediaPlayer.setDataSource(playList[songIndex].path)
+        mediaPlayer.setDataSource(context,Uri.parse(playList[songIndex].path))
         mediaPlayer.prepare()
         mediaPlayer.setVolume(1.0f, 1.0f)
         mediaPlayer.start()

@@ -17,6 +17,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Music"
         tools:targetApi="31">
+        <provider
+            android:authorities="com.example.music.models"
+            android:name=".models.RawFilesProvider"
+            android:exported="true">
+        </provider>
         <activity
             android:name=".MainActivity"
             android:exported="true">
